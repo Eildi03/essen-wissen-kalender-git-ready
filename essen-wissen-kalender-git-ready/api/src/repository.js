@@ -123,12 +123,13 @@ export async function insertEvent(client, input, userId) {
     input.topic ?? null, input.internalNotes ?? null, input.visibility || 'internal',
     input.showPublicStatus ?? true, userId, userId,
   ];
+  const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
   const result = await client.query(`
     INSERT INTO essen_wissen.events (
       title, public_title, description, public_description, event_type, status, starts_at, ends_at,
       all_day, timezone, institution_id, location_id, expected_children, expected_companions,
       target_group, topic, internal_notes, visibility, show_public_status, created_by, updated_by
-    ) VALUES (${values.map((_, index) => `$${index + 1}`).join(', ')}) RETURNING id`, values);
+    ) VALUES (${placeholders}) RETURNING id`, values);
   const id = result.rows[0].id;
   await syncRelations(client, id, input);
   return id;
