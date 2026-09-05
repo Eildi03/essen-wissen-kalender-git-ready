@@ -1,0 +1,20 @@
+{
+  "name": "essen-wissen-kalender",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gesamtprojekt fuer den Essen-Wissen Einsatz- und Veranstaltungskalender",
+  "scripts": {
+    "check": "sh scripts/check-project.sh",
+    "check:api": "npm --prefix api run check",
+    "compose:up": "docker compose -f compose.yaml up -d --build",
+    "compose:dev": "docker compose -f compose.yaml -f compose.dev.yaml up -d --build",
+    "compose:down": "docker compose -f compose.yaml -f compose.dev.yaml down",
+    "compose:logs": "docker compose -f compose.yaml -f compose.dev.yaml logs -f",
+    "compose:ps": "docker compose -f compose.yaml -f compose.dev.yaml ps",
+    "db:migrate": "docker compose -f compose.yaml -f compose.dev.yaml exec api npm run db:migrate",
+    "db:seed": "docker compose -f compose.yaml -f compose.dev.yaml exec api npm run db:seed"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

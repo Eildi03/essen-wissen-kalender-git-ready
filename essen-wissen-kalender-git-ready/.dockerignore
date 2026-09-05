@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+.env.*
+node_modules
+coverage
+*.log
+secrets
+postgres_data
+caddy_data
+caddy_config

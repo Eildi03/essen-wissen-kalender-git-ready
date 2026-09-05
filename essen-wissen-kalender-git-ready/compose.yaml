@@ -1,0 +1,101 @@
+name: essen-wissen-kalender
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-essen_wissen}
+      POSTGRES_USER: ${POSTGRES_USER:-essen_wissen_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD muss gesetzt werden}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./api/db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    security_opt: [no-new-privileges:true]
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?PGADMIN_PASSWORD muss gesetzt werden}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      SCRIPT_NAME: "/"
+      PGADMIN_CONFIG_PROXY_X_FOR_COUNT: "1"
+      PGADMIN_CONFIG_PROXY_X_PROTO_COUNT: "1"
+      PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks: [backend, frontend]
+    expose: ["8080"]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-essen_wissen_admin}:${POSTGRES_PASSWORD}@postgres:5436/${POSTGRES_DB:-essen_wissen}
+      PGSSL: "false"
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://kalender.localhost}
+      TRUST_PROXY: "true"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET muss gesetzt werden}
+      JWT_TTL: ${JWT_TTL:-15m}
+      PG_POOL_MAX: ${PG_POOL_MAX:-10}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [backend]
+    expose: ["3000"]
+    read_only: true
+    tmpfs: 
+        /tmp:rw,size=64m
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks: [frontend]
+    tmpfs:
+      - /tmp:rw,size=8m
+    cap_drop: [ALL]
+
+  proxy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_started
+      frontend:
+        condition: service_started
+    networks: [frontend, backend]
+    security_opt: [no-new-privileges:true]
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  frontend: { driver: bridge }
+  backend: { driver: bridge, internal: true }

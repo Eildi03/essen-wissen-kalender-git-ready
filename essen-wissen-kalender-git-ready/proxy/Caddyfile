@@ -1,0 +1,41 @@
+{
+  auto_https disable_redirects
+}
+
+https://kalender.localhost {
+  tls internal
+  encode gzip zstd
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    -Server
+  }
+  reverse_proxy frontend:8888
+}
+
+https://api.kalender.localhost {
+  tls internal
+  encode gzip zstd
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "no-referrer"
+    Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Cache-Control "no-store"
+    -Server
+  }
+  reverse_proxy api:3000
+}
+
+https://pgadmin.kalender.localhost {
+  tls internal
+  uri strip_prefix /pgadmin
+  header X-Script-Name /pgadmin
+  header X-Forwarded-Proto https
+  header X-Forwarded-Host pgadmin.kalender.localhost
+  reverse_proxy pgadmin:8080
+}
