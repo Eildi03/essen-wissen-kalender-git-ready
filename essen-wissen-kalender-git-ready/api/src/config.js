@@ -1,4 +1,12 @@
 import process from 'node:process';
+import fs from 'node:fs';
+function secret(name) {
+  const file = process.env[`${name}_FILE`];
+  if (file) return fs.readFileSync(file, 'utf8').trim();
+  const value = process.env[name];
+  if (!value) throw new Error(`Secret ${name} fehlt.`);
+  return value;
+}
 function required(name) { const value = process.env[name]; if (!value) throw new Error(`Umgebungsvariable ${name} fehlt.`); return value; }
 export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',

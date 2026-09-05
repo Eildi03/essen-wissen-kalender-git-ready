@@ -31,11 +31,3 @@ https://api.kalender.localhost {
   reverse_proxy api:3000
 }
 
-https://pgadmin.kalender.localhost {
-  tls internal
-  uri strip_prefix /pgadmin
-  header X-Script-Name /pgadmin
-  header X-Forwarded-Proto https
-  header X-Forwarded-Host pgadmin.kalender.localhost
-  reverse_proxy pgadmin:8080
-}

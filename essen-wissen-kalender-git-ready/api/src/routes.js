@@ -6,9 +6,11 @@ import { eventInput, httpError, isUuid, pagination, requiredString } from './val
 
 export const router = Router();
 
+const ALLOWED_ROLES = new Set(['administrator', 'planner', 'internal_reader']);
+
 router.get('/health', (req, res) => res.json({ status: 'ok', service: 'essen-wissen-kalender-api' }));
 
-router.post('/auth/login', async (req, res, next) => {
+router.post('/auth/login', loginLimiter, async (req, res, next) => {
   try {
     const email = requiredString(req.body?.email, 'email', 320).toLowerCase();
     const password = requiredString(req.body?.password, 'password', 500);
@@ -29,7 +31,7 @@ router.get('/auth/me', authMiddleware, async (req, res, next) => {
   } catch (error) { return next(error); }
 });
 
-router.get('/public/events', async (req, res, next) => {
+router.get('/public/events', publicLimiter, async (req, res, next) => {
   try {
     const from = req.query.from || new Date().toISOString();
     const to = req.query.to || new Date(Date.now() + 365 * 86400000).toISOString();
@@ -130,6 +132,10 @@ router.post('/admin/users', requirePermission('user.manage'), async (req, res, n
 
 router.post('/admin/users/:id/roles', requirePermission('user.manage'), async (req, res, next) => {
   try {
+    if (req.body.roles.some(role => !ALLOWED_ROLES.has(role))) {
+        throw httpError(400, 'VALIDATION_ERROR', 'Die Rollenliste enthaelt einen unbekannten Wert.');}
+    if (req.params.id === req.user.sub && !req.body.roles.includes('administrator')) {
+        throw httpError(409, 'LAST_ADMIN', 'Die eigene Administratorrolle kann nicht entzogen werden.');}
     if (!isUuid(req.params.id) || !Array.isArray(req.body?.roles)) throw httpError(400, 'VALIDATION_ERROR', 'Benutzer-ID oder Rollenliste ist ungueltig.');
     await withTransaction(async client => {
       await client.query('DELETE FROM essen_wissen.user_roles WHERE user_id = $1', [req.params.id]);
