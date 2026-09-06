@@ -425,16 +425,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS events_series_occurrence_unique
   ON events (series_id, occurrence_start)
   WHERE series_id IS NOT NULL AND occurrence_start IS NOT NULL;
 
-CREATE INDEX IF NOT EXISTS events_search_idx
-  ON events USING gin (
-    to_tsvector(
-      'german',
-      concat_ws(
-        ' ', title, public_title, description, public_description,
-        topic, target_group, internal_notes
-      )
-    )
-  );
+
 
 CREATE TABLE IF NOT EXISTS event_contacts (
   event_id     uuid NOT NULL REFERENCES events(id) ON DELETE CASCADE,
@@ -844,4 +835,5 @@ GROUP BY
 -- Niemals Klartextpasswörter in app_users.password_hash ablegen.
 
 COMMIT;
+
 

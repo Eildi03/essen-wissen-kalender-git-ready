@@ -11,6 +11,8 @@ const ALLOWED_ROLES = new Set(['administrator', 'planner', 'internal_reader']);
 
 router.get('/health', (req, res) => res.json({ status: 'ok', service: 'essen-wissen-kalender-api' }));
 
+router.post('/test', (req, res) => res.json({ message: 'POST funktioniert', body: req.body }));
+
 router.post('/auth/login', loginLimiter, async (req, res, next) => {
   try {
     const email = requiredString(req.body?.email, 'email', 320).toLowerCase();

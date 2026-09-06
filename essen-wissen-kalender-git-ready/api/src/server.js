@@ -16,14 +16,14 @@ app.use(helmet({
 app.use((req, res, next) => { req.id = req.headers['x-request-id'] || crypto.randomUUID(); res.setHeader('x-request-id', req.id); next(); });
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+  if (config.nodeEnv === 'production' && config.corsOrigin === '*') {
+    throw new Error('CORS_ORIGIN darf in Produktion nicht "*" sein.');
+  }
   if (origin && (config.corsOrigin === "*" || origin === config.corsOrigin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Vary", "Origin");
   }
-  if (config.nodeEnv === 'production' && config.corsOrigin === '*') {
-  throw new Error('CORS_ORIGIN darf in Produktion nicht "*" sein.');
-}
   if (req.method === "OPTIONS") {
     res.setHeader(
       "Access-Control-Allow-Methods",

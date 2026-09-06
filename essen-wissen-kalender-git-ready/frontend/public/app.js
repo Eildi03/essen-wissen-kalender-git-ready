@@ -1,5 +1,5 @@
 const app = document.getElementById("app"); console.log("app element:", app);
-const API_BASE = "https://kalender.localhost/api/v1"; // ggf. anpassen
+const API_BASE = "http://api.kalender.localhost/api/v1"; // ggf. anpassen
 
 let authToken = null;
 
@@ -1267,6 +1267,8 @@ async function apiRequest(path, options = {}) {
 
         renderShell();
       })();
+
+
 
 
 

@@ -28,10 +28,8 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?PGADMIN_PASSWORD muss gesetzt werden}
       PGADMIN_CONFIG_SERVER_MODE: "False"
-      SCRIPT_NAME: "/"
-      PGADMIN_CONFIG_PROXY_X_FOR_COUNT: "1"
-      PGADMIN_CONFIG_PROXY_X_PROTO_COUNT: "1"
       PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"
+      PGADMIN_CONFIG_COOKIE_SAMESITE: "Lax"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     networks: [backend, frontend]

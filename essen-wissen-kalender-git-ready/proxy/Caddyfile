@@ -1,12 +1,11 @@
 {
-  auto_https disable_redirects
+  auto_https off
+  http_port 80
 }
 
-https://kalender.localhost {
-  tls internal
+http://kalender.localhost {
   encode gzip zstd
   header {
-    Strict-Transport-Security "max-age=31536000; includeSubDomains"
     X-Content-Type-Options "nosniff"
     X-Frame-Options "DENY"
     Referrer-Policy "strict-origin-when-cross-origin"
@@ -16,11 +15,9 @@ https://kalender.localhost {
   reverse_proxy frontend:8888
 }
 
-https://api.kalender.localhost {
-  tls internal
+http://api.kalender.localhost {
   encode gzip zstd
   header {
-    Strict-Transport-Security "max-age=31536000; includeSubDomains"
     X-Content-Type-Options "nosniff"
     X-Frame-Options "DENY"
     Referrer-Policy "no-referrer"
@@ -28,6 +25,18 @@ https://api.kalender.localhost {
     Cache-Control "no-store"
     -Server
   }
-  reverse_proxy api:3000
+  reverse_proxy api:3000 {
+    header_up -x-forwarded-proto
+    header_up x-forwarded-proto http
+  }
 }
 
+http://pgadmin.kalender.localhost {
+  reverse_proxy pgadmin:8080
+}
+
+http://adminer.kalender.localhost {
+  reverse_proxy adminer:8080 {
+    header_out Content-Type "text/html; charset=utf-8"
+  }
+}
