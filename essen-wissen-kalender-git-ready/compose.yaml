@@ -9,7 +9,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD muss gesetzt werden}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      # - ./api/db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro   migration -> leere db
+      - ./api/db/migrations/001_baseline.sql:/docker-entrypoint-initdb.d/001-baseline.sql:ro
+      - ./api/db/migrations/002_add_sessions_table.sql:/docker-entrypoint-initdb.d/002-sessions.sql:ro
+      - ./api/db/migrations/003_add_trgm_indexes.sql:/docker-entrypoint-initdb.d/003-trgm.sql:ro
+      - ./api/db/migrations/004_add_roles.sql:/docker-entrypoint-initdb.d/004-roles.sql:ro
     networks: [backend]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
@@ -18,18 +21,6 @@ services:
       retries: 10
     security_opt: [no-new-privileges:true]
 
-  db-migrations:
-    image: ghcr.io/amacneil/dbmate:latest
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: postgres://${POSTGRES_USER:-essen_wissen_admin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-essen_wissen}?sslmode=disable
-    volumes:
-      - ./api/db/migrations:/db/migrations:ro
-    command: ["up"]
-    restart: "no"
-    networks:
-      - backend
   pgadmin:
     image: dpage/pgadmin4:latest
     restart: unless-stopped
@@ -58,7 +49,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: 3000
-      DATABASE_URL: postgres://${POSTGRES_USER:-essen_wissen_admin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-essen_wissen}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-essen_wissen}
       PGSSL: "false"
       CORS_ORIGIN: ${CORS_ORIGIN:-https://kalender.localhost}
       TRUST_PROXY: "true"
@@ -68,20 +59,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      db-migrations:
-        condition: service_completed_successfully
     networks: [backend]
     expose: ["3000"]
     tmpfs: 
       - /tmp:rw,size=64m
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
-    deploy:
-      resources:
-        limits: { cpus: "1.0", memory: 512M }
-    logging:
-      driver: json-file
-      options: { max-size: "10m", max-file: "5" }
 
   frontend:
     build:

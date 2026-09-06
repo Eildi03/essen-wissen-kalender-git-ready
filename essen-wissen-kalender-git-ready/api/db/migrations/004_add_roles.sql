@@ -1,3 +1,4 @@
+-- migrate:up
 -- 004_add_roles.sql
 -- Rollen für Migration und Runtime
 

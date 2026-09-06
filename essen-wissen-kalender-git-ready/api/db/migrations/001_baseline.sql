@@ -1,3 +1,4 @@
+-- migrate:up
 -- Essen-Wissen Stiftung Eildermann
 -- PostgreSQL-Schema für Einsatz- und Veranstaltungskalender
 -- Zielversion: PostgreSQL 15+
@@ -843,3 +844,4 @@ GROUP BY
 -- Niemals Klartextpasswörter in app_users.password_hash ablegen.
 
 COMMIT;
+

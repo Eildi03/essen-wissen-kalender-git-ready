@@ -1,3 +1,4 @@
+-- migrate:up
 -- 003_add_trgm_indexes.sql
 -- Leistungsverbesserung für Suchabfragen
 
