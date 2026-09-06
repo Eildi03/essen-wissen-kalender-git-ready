@@ -4,7 +4,7 @@ import { query, withTransaction } from './db.js';
 import { countInternalEvents, getInternalEvent, getUserWithPermissions, insertEvent, listInternalEvents, listPublicEvents, softDeleteEvent, updateEvent, updateLastLogin } from './repository.js';
 import { eventInput, httpError, isUuid, pagination, requiredString } from './validation.js';
 // api/src/ratelimit.js
-import rateLimit from 'express-rate-limit';
+// import rateLimit from 'express-rate-limit';
 import { loginLimiter, publicLimiter, apiLimiter } from './ratelimit.js';
 
 
