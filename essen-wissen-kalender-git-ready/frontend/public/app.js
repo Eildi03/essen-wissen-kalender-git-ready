@@ -1,3 +1,4 @@
+const app = document.getElementById("app");
 const API_BASE = "https://kalender.localhost/api/v1"; // ggf. anpassen
 
 let authToken = null;
@@ -317,7 +318,7 @@ async function apiRequest(path, options = {}) {
           ],
         };
 
-        const app = document.getElementById("app");
+        
         const esc = (value) =>
           String(value ?? "").replace(
             /[&<>'"]/g,
