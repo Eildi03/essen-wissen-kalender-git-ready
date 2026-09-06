@@ -3,16 +3,9 @@ import { authMiddleware, hashPassword, requireAnyPermission, requirePermission, 
 import { query, withTransaction } from './db.js';
 import { countInternalEvents, getInternalEvent, getUserWithPermissions, insertEvent, listInternalEvents, listPublicEvents, softDeleteEvent, updateEvent, updateLastLogin } from './repository.js';
 import { eventInput, httpError, isUuid, pagination, requiredString } from './validation.js';
-// api/src/ratelimit.js
-// import rateLimit from 'express-rate-limit';
-import { loginLimiter, publicLimiter, apiLimiter } from './ratelimit.js';
+import { loginLimiter,publicLimiter, apiLimiter } from './ratelimit.js';
 
-
-export const publicLimiter = rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-7', legacyHeaders: false });
-export const apiLimiter = rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: 'draft-7', legacyHeaders: false });
 export const router = Router();
-
-
 
 const ALLOWED_ROLES = new Set(['administrator', 'planner', 'internal_reader']);
 
