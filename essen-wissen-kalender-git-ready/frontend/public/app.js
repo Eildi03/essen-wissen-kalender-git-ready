@@ -478,7 +478,7 @@ async function apiRequest(path, options = {}) {
             ? event.city + " · " + event.state
             : event.institution + " · " + event.city;
 
-        function renderShell() {
+        function renderShell() { console.log('renderShell called');
           app.innerHTML = `
           <div class="app-shell">
             <aside class="sidebar">
@@ -1267,4 +1267,5 @@ async function apiRequest(path, options = {}) {
 
         renderShell();
       })();
+
 
