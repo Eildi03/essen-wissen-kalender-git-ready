@@ -10,6 +10,28 @@ permissions:
   id-token: write
 
 jobs:
+  build-and-migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build images
+        run: |
+          docker compose -f compose.yaml build
+
+      - name: Run DB migrations
+        env:
+          POSTGRES_DB: essen_wissen
+          POSTGRES_USER: essen_wissen_admin
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        run: |
+          docker compose -f compose.yaml run --rm db-migrations
+
+      # weitere Schritte: Push, Deploy
   publish:
     runs-on: ubuntu-latest
     outputs:

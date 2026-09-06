@@ -25,7 +25,7 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-essen_wissen_admin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-essen_wissen}?sslmode=disable
     volumes:
-      - ./api/db/migrations:/db/migrations
+      - ./api/db/migrations:/db/migrations:ro
     command: ["up"]
     restart: "no"
     networks:
@@ -68,6 +68,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      db-migrations:
+        condition: service_completed_successfully
     networks: [backend]
     expose: ["3000"]
     tmpfs: 
