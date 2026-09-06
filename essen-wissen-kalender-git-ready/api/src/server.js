@@ -14,7 +14,30 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'same-site' },
 }));
 app.use((req, res, next) => { req.id = req.headers['x-request-id'] || crypto.randomUUID(); res.setHeader('x-request-id', req.id); next(); });
-app.use((req, res, next) => { const origin = req.headers.origin; if (origin && (config.corsOrigin === '*' || origin === config.corsOrigin)) { res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Access-Control-Allow-Credentials', 'true'); res.setHeader('Vary', 'Origin'); } if (req.method === 'OPTIONS') { res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Request-Id'); return res.status(204).send(); } return next(); });
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (config.corsOrigin === "*" || origin === config.corsOrigin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Vary", "Origin");
+  }
+  if (config.nodeEnv === 'production' && config.corsOrigin === '*') {
+  throw new Error('CORS_ORIGIN darf in Produktion nicht "*" sein.');
+}
+  if (req.method === "OPTIONS") {
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET,POST,PATCH,DELETE,OPTIONS",
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Authorization, Content-Type, X-Request-Id",
+    );
+    return res.status(204).send();
+  }
+  return next();
+});
+
 app.get('/healthz', async (req, res) => { try { await healthcheck(); return res.json({ status: 'ok' }); } catch { return res.status(503).json({ status: 'unavailable' }); } });
 app.use('/api/v1', router); app.use(notFound); app.use(errorHandler);
 const server = app.listen(config.port, () => console.log(`Essen-Wissen API laeuft auf Port ${config.port}`));

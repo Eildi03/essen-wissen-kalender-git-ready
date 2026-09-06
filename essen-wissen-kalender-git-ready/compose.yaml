@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD muss gesetzt werden}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./api/db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+      # - ./api/db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro   migration -> leere db
     networks: [backend]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
@@ -18,6 +18,37 @@ services:
       retries: 10
     security_opt: [no-new-privileges:true]
 
+  db-migrations:
+    image: ghcr.io/amacneil/dbmate:latest
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-essen_wissen_admin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-essen_wissen}?sslmode=disable
+    volumes:
+      - ./api/db/migrations:/db/migrations
+    command: ["up"]
+    restart: "no"
+    networks:
+      - backend
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?PGADMIN_PASSWORD muss gesetzt werden}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      SCRIPT_NAME: "/"
+      PGADMIN_CONFIG_PROXY_X_FOR_COUNT: "1"
+      PGADMIN_CONFIG_PROXY_X_PROTO_COUNT: "1"
+      PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks: [backend, frontend]
+    expose: ["8080"]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   api:
     build:
@@ -31,32 +62,34 @@ services:
       PGSSL: "false"
       CORS_ORIGIN: ${CORS_ORIGIN:-https://kalender.localhost}
       TRUST_PROXY: "true"
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-      DATABASE_PASSWORD_FILE: /run/secrets/db_password
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET muss gesetzt werden}
       JWT_TTL: ${JWT_TTL:-15m}
       PG_POOL_MAX: ${PG_POOL_MAX:-10}
-    secrets: [jwt_secret, db_password]  
     depends_on:
       postgres:
         condition: service_healthy
     networks: [backend]
     expose: ["3000"]
-    read_only: true
     tmpfs: 
-        /tmp:rw,size=64m
+      - /tmp:rw,size=64m
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
-  
+    deploy:
+      resources:
+        limits: { cpus: "1.0", memory: 512M }
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
   frontend:
-    build: { context: ./frontend }
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     restart: unless-stopped
-    user: "101:101"
-    read_only: true
-    tmpfs:
-      - /tmp:rw,noexec,nosuid,size=16m
-    cap_drop: [ALL]
-    security_opt: [no-new-privileges:true]
     networks: [frontend]
+    tmpfs:
+      - /tmp:rw,size=8m
+    cap_drop: [ALL]
 
   proxy:
     image: caddy:2.8-alpine
@@ -74,11 +107,6 @@ services:
     networks: [frontend, backend]
     security_opt: [no-new-privileges:true]
 
-secrets:
-    jwt_secret:
-      file: ./secrets/jwt_secret
-    db_password:
-      file: ./secrets/db_password
 volumes:
   postgres_data:
   pgadmin_data:
