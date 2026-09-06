@@ -34,9 +34,3 @@ http://api.kalender.localhost {
 http://pgadmin.kalender.localhost {
   reverse_proxy pgadmin:8080
 }
-
-http://adminer.kalender.localhost {
-  reverse_proxy adminer:8080 {
-    header_out Content-Type "text/html; charset=utf-8"
-  }
-}

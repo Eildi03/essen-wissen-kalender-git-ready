@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+
+scrape_configs:
+  - job_name: "api"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets:
+          - "api:3000"   # API-Container, falls /metrics implementiert
+
+  - job_name: "proxy"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets:
+          - "proxy:2019" # Beispiel für Caddy-Metriken, ggf. anpassen
+
+  # Weitere Jobs (PostgreSQL-Exporter, Node-Exporter) nach Bedarf ergänzen
