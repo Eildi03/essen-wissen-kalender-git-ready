@@ -1,4 +1,4 @@
-const app = document.getElementById("app");
+const app = document.getElementById("app"); console.log("app element:", app);
 const API_BASE = "https://kalender.localhost/api/v1"; // ggf. anpassen
 
 let authToken = null;
@@ -478,7 +478,7 @@ async function apiRequest(path, options = {}) {
             ? event.city + " · " + event.state
             : event.institution + " · " + event.city;
 
-        function renderShell() { console.log('renderShell called');
+        function renderShell() { 
           app.innerHTML = `
           <div class="app-shell">
             <aside class="sidebar">
@@ -1267,5 +1267,7 @@ async function apiRequest(path, options = {}) {
 
         renderShell();
       })();
+
+
 
 
