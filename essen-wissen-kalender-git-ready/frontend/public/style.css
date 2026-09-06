@@ -1641,3 +1641,56 @@
           transition-duration: 0.01ms !important;
         }
       }
+
+      #login {
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(207, 231, 209, 0.2);
+      }
+      #login h2 {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0 0 12px;
+        color: #eff5e9;
+      }
+      #login-form {
+        display: grid;
+        gap: 10px;
+      }
+      #login label {
+        display: grid;
+        gap: 5px;
+        font-size: 11px;
+        color: #b4d1c0;
+      }
+      #login input {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 8px 10px;
+        color: #eff5e9;
+        font-size: 12px;
+      }
+      #login input::placeholder {
+        color: #7fa8a0;
+      }
+      #login button[type="submit"] {
+        background: var(--coral);
+        color: white;
+        border: 0;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-weight: 700;
+        font-size: 12px;
+        margin-top: 6px;
+        transition: 0.15s ease;
+      }
+      #login button[type="submit"]:hover {
+        filter: brightness(1.1);
+      }
+      #login-status {
+        font-size: 11px;
+        color: #f7ce85;
+        margin-top: 8px;
+        min-height: 16px;
+      }
