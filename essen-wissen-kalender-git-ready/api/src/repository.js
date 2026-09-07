@@ -1,5 +1,27 @@
 import { query } from './db.js';
 
+//export async function listPublicEvents(filters) {
+//  const sql = /* deine SELECT-Query */;
+//  const params = /* deine Parameter */;
+//  const result = await query(sql, params, {
+//    operation: 'select',
+//    table: 'public_calendar_events',
+//  });
+//  return result.rows;
+//}
+
+//export async function createEvent(input) {
+//  const sql = /* INSERT-Query */;
+//  const params = /* Parameter */;
+//
+//  const result = await query(sql, params, {
+//    operation: 'insert',
+ //   table: 'events',
+ // });
+//
+//  return result.rows[0];
+//}
+
 const baseColumns = `
   e.id, e.series_id AS "seriesId", e.occurrence_start AS "occurrenceStart",
   e.title, e.public_title AS "publicTitle", e.description, e.public_description AS "publicDescription",
