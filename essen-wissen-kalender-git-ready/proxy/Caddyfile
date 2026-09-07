@@ -1,3 +1,4 @@
+
 {
   auto_https off
   http_port 80
@@ -33,7 +34,4 @@ http://api.kalender.localhost {
 
 http://pgadmin.kalender.localhost {
   reverse_proxy pgadmin:8080
-}
-{
-  admin 0.0.0.0:2019
 }

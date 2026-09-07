@@ -45,4 +45,3 @@ export const dbQueryErrorsTotal = new client.Counter({
 });
 // Exportiertes Registry
 export { register };
-export { register, dbQueryDurationSeconds };

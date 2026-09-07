@@ -15,11 +15,7 @@ scrape_configs:
       - targets:
           - "proxy:2019" # Beispiel für Caddy-Metriken, ggf. anpassen
   
-  - job_name: "api"
-    metrics_path: "/metrics"  # oder /api/v1/metrics
-    static_configs:
-      - targets:
-          - "api:3000"
+
 
 
  

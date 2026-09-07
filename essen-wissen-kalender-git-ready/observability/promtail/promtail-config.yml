@@ -7,7 +7,6 @@ positions:
 
 clients:
   - url: http://loki:3100/loki/api/v1/push
-tenant_id: ""
 
 scrape_configs:
   - job_name: docker
@@ -18,15 +17,16 @@ scrape_configs:
       - host: unix:///var/run/docker.sock
         refresh_interval: 30s
     relabel_configs:
-      # Standard-Label für den Job
-      - source_labels: [__meta_docker_container_name]
-        target_label: job
-      # Container-Name als „container“ Label
+      # nur bestimmte Services behalten (optional)
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        regex: "api|frontend|proxy"
+        action: keep
+
       - source_labels: [__meta_docker_container_name]
         target_label: container
-      # Service-Label aus Compose (falls gesetzt)
+
       - source_labels: [__meta_docker_container_label_com_docker_compose_service]
         target_label: service
-      # Logs-Pfad setzen
+
       - source_labels: [__meta_docker_container_log_path]
         target_label: __path__
