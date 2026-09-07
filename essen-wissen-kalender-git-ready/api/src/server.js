@@ -4,7 +4,6 @@ import { config } from './config.js';
 import { closePool, healthcheck } from './db.js';
 import { errorHandler, notFound, router } from './routes.js';
 import helmet from 'helmet';
-import express from 'express';
 import { register, httpRequestsTotal, httpRequestDurationSeconds } from './metrics.js';
 // einfache Metrik-Middleware
 

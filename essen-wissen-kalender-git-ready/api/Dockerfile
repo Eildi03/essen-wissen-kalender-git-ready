@@ -2,7 +2,7 @@
 FROM node:20-bookworm-slim AS dependencies
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+RUN npm install --omit=dev --ignore-scripts
 
 FROM node:20-bookworm-slim AS runtime
 ENV NODE_ENV=production
