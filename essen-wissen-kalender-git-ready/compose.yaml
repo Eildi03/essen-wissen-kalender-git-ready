@@ -183,9 +183,39 @@ services:
          limits:
            cpus: "0.3"
            memory: 128M 
-      
-
-
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:0.11.0
+    container_name: nginx-exporter
+    restart: unless-stopped
+    command:
+      - "-nginx.scrape-uri=http://frontend:8080/nginx_status"
+      - "-web.listen-address=:9113"
+    ports:
+      - "127.0.0.1:9113:9113"  # lokal erreichbar für Debug
+    networks:
+      - frontend
+      - observability
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 64M 
+  caddy-exporter:
+    image: lablup/caddy-exporter:0.6.0
+    container_name: caddy-exporter
+    restart: unless-stopped
+    environment:
+      CADDY_ADMIN_URL: "http://proxy:2019"
+    ports:
+      - "127.0.0.1:9180:9180"  # lokal erreichbar
+    networks:
+      - backend
+      - observability
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 64M
 
 volumes:
   postgres_data:
