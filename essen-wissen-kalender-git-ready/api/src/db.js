@@ -2,8 +2,13 @@ import pg from 'pg';
 import crypto from 'node:crypto';
 import { config } from './config.js';
 
-const { Pool } = pg;
-export const pool = new Pool({ connectionString: config.databaseUrl, ssl: config.pgSsl, max: config.poolMax, idleTimeoutMillis: 30000, connectionTimeoutMillis: 5000, application_name: 'essen-wissen-kalender-api' });
+
+
+export const pool = new pg.Pool({
+  connectionString: config.databaseUrl,
+  ssl: config.pgSsl || false,
+  max: config.pgPoolMax || 10
+});
 export async function query(text, values = []) { return pool.query(text, values); }
 export async function withTransaction(work, context = {}) {
   const client = await pool.connect(); const requestId = context.requestId || crypto.randomUUID();
