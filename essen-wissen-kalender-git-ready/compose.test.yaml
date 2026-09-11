@@ -1,0 +1,31 @@
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: essen_wissen_test
+      POSTGRES_USER: essen_wissen_admin
+      POSTGRES_PASSWORD: admin_pw
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data
+    networks: [backend]
+
+  api-test:
+    build:
+      context: ./api
+    environment:
+      NODE_ENV: test
+      DATABASE_URL: postgres://essen_wissen_admin:admin_pw@postgres-test:5432/essen_wissen_test
+      JWT_SECRET: test-secret
+    depends_on:
+      - postgres-test
+    networks: [backend]
+    command: ["npm", "run", "test:integration"]
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres-test-data:
