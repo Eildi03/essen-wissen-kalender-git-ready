@@ -21,5 +21,5 @@ if (!process.env.DATABASE_URL) {
 
 // DB-Verbindung nach allen Tests schließen
 afterAll(async () => {
-  await pool.end();
+ // await pool.end();
 });
