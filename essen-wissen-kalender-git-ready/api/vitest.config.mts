@@ -10,11 +10,11 @@ export default defineConfig({
     setupFiles: ['tests/setup.js'],
     maxConcurrency: 4,
     testTimeout: 300000,
-    coverage: {
-      enabled: true,
-      reporter: ['text', 'lcov'],
-      include: ['src/**/*.js'],
-      exclude: ['src/server.js'] // optional, wenn Startcode
-    }
+   // coverage: {
+   //   enabled: true,
+   //   reporter: ['text', 'lcov'],
+   //   include: ['src/**/*.js'],
+   //   exclude: ['src/server.js'] // optional, wenn Startcode
+   // }
   }
 });

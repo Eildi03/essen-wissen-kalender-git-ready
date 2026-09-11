@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { esc } from '../../public/app.js'; // ggf. export ergänzen
+import { esc } from '../../public/utils.js';
 
 describe('esc helper', () => {
   it('escaped gefährliche Zeichen korrekt', () => {

@@ -7,10 +7,10 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['tests/**/*.test.{js,ts,mjs,cjs}'],
     setupFiles: ['tests/setup.js'],
-    coverage: {
-      enabled: true,
-      reporter: ['text', 'lcov'],
-      include: ['public/app.js']
-    }
+    // coverage: {
+    //  enabled: true,
+    //  reporter: ['text', 'lcov'],
+    //  include: ['public/app.js']
+    //}
   }
 });

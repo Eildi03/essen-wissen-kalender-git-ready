@@ -7,8 +7,18 @@ function secret(name) {
   if (!value) throw new Error(`Secret ${name} fehlt.`);
   return value;
 }
-function required(name) { const value = process.env[name]; if (!value) throw new Error(`Umgebungsvariable ${name} fehlt.`); return value; }
-export const config = {
+function required(name) {
+  const value = process.env[name];
+  if (!value) {
+    if (process.env.NODE_ENV === 'test' && name === 'DATABASE_URL') {
+      // Test-Fallback
+      return 'postgres://essen_wissen_admin:admin_pw@localhost:5432/essen_wissen_test';
+    }
+    throw new Error(`Umgebungsvariable ${name} fehlt.`);
+  }
+  return value;
+}
+  export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: Number(process.env.PORT || 3000),
   databaseUrl: required('DATABASE_URL'),

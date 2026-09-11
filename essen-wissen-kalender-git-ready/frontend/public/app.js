@@ -1,3 +1,6 @@
+import { esc } from './utils.js';
+// Entferne die alte esc-Definition in app.js
+
 const app = document.getElementById("app"); console.log("app element:", app);
 const API_BASE = "http://api.kalender.localhost/api/v1"; // ggf. anpassen
 
@@ -319,18 +322,7 @@ async function apiRequest(path, options = {}) {
         };
 
         
-        const esc = (value) =>
-          String(value ?? "").replace(
-            /[&<>'"]/g,
-            (c) =>
-              ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                "'": "&#39;",
-                '"': "&quot;",
-              })[c],
-          );
+
         const icon = (name, stroke = "currentColor") => {
           const paths = {
             bowl: '<path d="M4 10h16a8 8 0 0 1-16 0Z"/><path d="M7 19h10M9 6.5c1.5-1.3 4.5-1.3 6 0M12 4v2"/>',
