@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import '.env/config';
 
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-secret';

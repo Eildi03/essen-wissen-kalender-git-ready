@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1.7
-FROM node:20-bookworm-slim AS dependencies
+FROM node:22-bookworm-slim AS dependencies
 WORKDIR /app
+RUN npm install -g npm@12.0.2
 COPY package*.json ./
 RUN npm install --omit=dev --ignore-scripts
 
