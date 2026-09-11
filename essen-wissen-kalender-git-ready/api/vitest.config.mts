@@ -9,6 +9,12 @@ export default defineConfig({
     exclude: ['node_modules', 'dist'],
     setupFiles: ['tests/setup.js'],
     maxConcurrency: 4,
-    testTimeout: 30000
+    testTimeout: 300000,
+    coverage: {
+      enabled: true,
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.js'],
+      exclude: ['src/server.js'] // optional, wenn Startcode
+    }
   }
 });
