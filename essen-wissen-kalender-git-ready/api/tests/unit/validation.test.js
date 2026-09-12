@@ -11,13 +11,13 @@ describe('validation helpers', () => {
   it('eventInput validiert grundlegende Felder', () => {
     const input = {
       title: 'Bus-Einsatz',
-      type: 'bus',
+      eventType: 'bus',
       startsAt: '2026-09-02T09:00:00Z',
       endsAt: '2026-09-02T13:00:00Z'
     };
     const result = eventInput(input);
-    // expect(result.title).toBe('Bus-Einsatz');
-    // expect(result.type).toBe('bus');
+    expect(result.title).toBe('Bus-Einsatz');
+    expect(result.eventType).toBe('bus');
     expect(result.startsAt).toBe('2026-09-02T09:00:00Z');
     expect(result.endsAt).toBe('2026-09-02T13:00:00Z');
   });
