@@ -10,7 +10,7 @@
     "dev": "node --watch src/server.js",
     "db:migrate": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f db/schema.sql",
     "db:seed": "node scripts/seed-demo.js",
-    "check": "node --check src/server.js && node --check scripts/seed-demo.js",
+    "check": "node --check src/app.js && node --check src/server.js && node --check scripts/seed-demo.js",
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",

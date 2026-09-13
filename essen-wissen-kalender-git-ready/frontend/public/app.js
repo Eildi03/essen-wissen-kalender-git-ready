@@ -1,6 +1,37 @@
 import { esc } from './utils.js';
 // Entferne die alte esc-Definition in app.js
 
+export function filterVisibleEvents(state) {
+  const query = state.search.trim().toLowerCase();
+  return state.events
+    .filter((e) => {
+      const isHiddenPublic = state.mode === "public" && e.visibility === "intern";
+      if (isHiddenPublic) return false;
+      if (state.type !== "all" && e.type !== state.type) return false;
+      if (state.status !== "all" && e.status !== state.status) return false;
+      if (state.region !== "all" && e.state !== state.region) return false;
+      if (query) {
+        const hay = [
+          e.title,
+          e.publicTitle,
+          e.institution,
+          e.city,
+          e.postal,
+          e.state,
+          e.topic,
+          e.status,
+          e.contact.first,
+          e.contact.last,
+        ]
+          .join(" ")
+          .toLowerCase();
+        if (!hay.includes(query)) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => (a.start + a.startTime).localeCompare(b.start + b.startTime));
+}
+
 const app = document.getElementById("app"); console.log("app element:", app);
 const API_BASE = "http://api.kalender.localhost/api/v1"; // ggf. anpassen
 
@@ -424,41 +455,7 @@ async function apiRequest(path, options = {}) {
             durchgeführt: "done",
             abgesagt: "cancelled",
           })[status] || "planned";
-        const isHiddenPublic = (event) =>
-          state.mode === "public" && event.visibility === "intern";
-        const visibleEvents = () => {
-          const query = state.search.trim().toLowerCase();
-          return state.events
-            .filter((e) => {
-              if (isHiddenPublic(e)) return false;
-              if (state.type !== "all" && e.type !== state.type) return false;
-              if (state.status !== "all" && e.status !== state.status)
-                return false;
-              if (state.region !== "all" && e.state !== state.region)
-                return false;
-              if (query) {
-                const hay = [
-                  e.title,
-                  e.publicTitle,
-                  e.institution,
-                  e.city,
-                  e.postal,
-                  e.state,
-                  e.topic,
-                  e.status,
-                  e.contact.first,
-                  e.contact.last,
-                ]
-                  .join(" ")
-                  .toLowerCase();
-                if (!hay.includes(query)) return false;
-              }
-              return true;
-            })
-            .sort((a, b) =>
-              (a.start + a.startTime).localeCompare(b.start + b.startTime),
-            );
-        };
+        const visibleEvents = () => filterVisibleEvents(state);
         const eventsForDate = (date) =>
           visibleEvents().filter(
             (e) => e.start <= keyDate(date) && e.end >= keyDate(date),

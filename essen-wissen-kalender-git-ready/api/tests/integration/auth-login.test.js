@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
-import app from '../../src/server.js';
+import app from '../../src/app.js';
 import { setupTestUser } from '../utils/db-test-helpers.js';
 
 
@@ -10,7 +10,7 @@ describe('POST /api/v1/auth/login', () => {
     await setupTestUser({
       email: 'test@example.org',
       password: 'geheim',
-      roles: ['planner']
+      roles: ['internal_reader']
     });
   });
 

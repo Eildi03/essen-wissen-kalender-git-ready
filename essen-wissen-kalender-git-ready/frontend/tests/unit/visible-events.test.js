@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { visibleEvents } from '../../public/app.js';
+import { filterVisibleEvents } from '../../public/app.js';
 
-describe('visibleEvents filtert anhand state', () => {
+describe('filterVisibleEvents filtert anhand state', () => {
   it('filtert nach Typ und Status', () => {
     const state = {
       events: [
@@ -14,7 +14,7 @@ describe('visibleEvents filtert anhand state', () => {
       search: '',
       mode: 'internal'
     };
-    const result = visibleEvents(state);
+    const result = filterVisibleEvents(state);
     expect(result).toHaveLength(1);
     expect(result[0].type).toBe('bus');
   });

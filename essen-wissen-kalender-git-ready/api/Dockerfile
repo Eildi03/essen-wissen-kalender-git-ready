@@ -5,6 +5,22 @@ RUN npm install -g npm@12.0.2
 COPY package*.json ./
 RUN npm install --omit=dev --ignore-scripts
 
+FROM node:22-bookworm-slim AS test-dependencies
+WORKDIR /app
+RUN npm install -g npm@12.0.2
+COPY package*.json ./
+RUN npm install --ignore-scripts
+
+FROM node:22-bookworm-slim AS test
+WORKDIR /app
+COPY --from=test-dependencies /app/node_modules ./node_modules
+COPY package*.json vitest.config.mts ./
+COPY src ./src
+COPY scripts ./scripts
+COPY db ./db
+COPY tests ./tests
+CMD ["npm", "run", "test:integration"]
+
 FROM node:20-bookworm-slim AS runtime
 ENV NODE_ENV=production
 WORKDIR /app

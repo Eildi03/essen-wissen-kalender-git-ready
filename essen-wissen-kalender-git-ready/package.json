@@ -6,13 +6,20 @@
   "scripts": {
     "check": "sh scripts/check-project.sh",
     "check:api": "npm --prefix api run check",
+    "test:api": "npm --prefix api test",
+    "test:api:unit": "npm --prefix api run test:unit",
+    "test:api:integration": "npm --prefix api run test:integration",
+    "test:frontend": "npm --prefix frontend test",
+    "test:e2e": "playwright test",
     "compose:up": "docker compose -f compose.yaml up -d --build",
     "compose:dev": "docker compose -f compose.yaml -f compose.dev.yaml up -d --build",
     "compose:down": "docker compose -f compose.yaml -f compose.dev.yaml down",
     "compose:logs": "docker compose -f compose.yaml -f compose.dev.yaml logs -f",
     "compose:ps": "docker compose -f compose.yaml -f compose.dev.yaml ps",
     "db:migrate": "docker compose -f compose.yaml -f compose.dev.yaml exec api npm run db:migrate",
-    "db:seed": "docker compose -f compose.yaml -f compose.dev.yaml exec api npm run db:seed"
+    "db:seed": "docker compose -f compose.yaml -f compose.dev.yaml exec api npm run db:seed",
+    "compose:test": "docker compose -f compose.test.yaml up --build --abort-on-container-exit",
+    "compose:test:down": "docker compose -f compose.test.yaml down -v"
   },
   "engines": {
     "node": ">=20"
