@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hashPassword, verifyPassword, createToken, verifyToken } from '../../src/auth.js';
+import { hashPassword, verifyPassword, createToken, verifyToken } from '../src/auth.js';
 
 describe('auth helpers', () => {
   it('hashPassword erzeugt gültigen scrypt-Hash', async () => {

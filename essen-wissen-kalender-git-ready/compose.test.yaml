@@ -16,7 +16,8 @@ services:
       context: ./api
     environment:
       NODE_ENV: test
-      DATABASE_URL: postgres://essen_wissen_admin:admin_pw@postgres-test:5432/essen_wissen_test
+      # DATABASE_URL: postgres://essen_wissen_admin:admin_pw@postgres-test:5432/essen_wissen_test
+      DATABASE_URL: postgres://essen_wissen_admin:admin_pw@localhost:55432:5432/essen_wissen_test
       JWT_SECRET: test-secret
     depends_on:
       - postgres-test

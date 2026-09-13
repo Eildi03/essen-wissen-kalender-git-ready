@@ -49,7 +49,7 @@ services:
       PORT: 3000
       POSTGRES_RUNTIME_USER: ${POSTGRES_RUNTIME_USER:-essen_wissen_api}
       POSTGRES_RUNTIME_PASSWORD: ${POSTGRES_RUNTIME_PASSWORD:?POSTGRES_RUNTIME_PASSWORD muss gesetzt werden}
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-essen_wissen}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:55432:5432/${POSTGRES_DB:-essen_wissen}
       PGSSL: "false"
       CORS_ORIGIN: ${CORS_ORIGIN:-https://kalender.localhost}
       TRUST_PROXY: "true"
